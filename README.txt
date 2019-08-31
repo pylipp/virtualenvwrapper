@@ -1,5 +1,28 @@
 ..   -*- mode: rst -*-
 
+FORK using the built-in Python ``venv`` module instead of depending on
+the ``virtualenv`` package.
+
+Installation:
+
+.. code::
+
+    git clone http://github.com/pylipp/virtualenvwrapper
+    cd virtualenvwrapper
+    git checkout use-venv-module
+
+    # Bootstrap virtualenvwrapper module
+    python3 -m venv ~/.virtualenvs/virtualenvwrapper
+    source ~/.virtualenvs/virtualenvwrapper/bin/activate
+    pip install -U pip
+    # Pull as little dependencies as possible
+    pip install --no-deps .
+    pip install stevedore
+
+    # Add to shell configuration file
+    export VIRTUALENVWRAPPER_PYTHON=~/.virtualenvs/virtualenvwrapper/bin/python
+    source virtualenvwrapper.sh
+
 #################
 virtualenvwrapper
 #################

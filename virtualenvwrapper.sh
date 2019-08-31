@@ -404,9 +404,9 @@ function virtualenvwrapper_mkvirtualenv_help {
     echo "    Provide a pip requirements file to install a base set of packages"
     echo "    into the new environment."
     echo;
-    echo 'virtualenv help:';
+    echo 'venv help:';
     echo;
-    "$VIRTUALENVWRAPPER_VIRTUALENV" $@;
+    "$VIRTUALENVWRAPPER_PYTHON" -m venv --help;
 }
 
 # Create a new environment, in the WORKON_HOME.
@@ -416,6 +416,12 @@ function virtualenvwrapper_mkvirtualenv_help {
 #
 #:help:mkvirtualenv: Create a new virtualenv in $WORKON_HOME
 function mkvirtualenv {
+    if [ $# -eq 0 ]
+    then
+        virtualenvwrapper_mkvirtualenv_help
+        return 1
+    fi
+
     typeset -a in_args
     typeset -a out_args
     typeset -i i
@@ -483,17 +489,19 @@ function mkvirtualenv {
     if [ ! -z $interpreter ]
     then
         out_args=( "--python=$interpreter" ${out_args[@]} )
+    else
+        interpreter="$VIRTUALENVWRAPPER_PYTHON"
     fi;
 
     set -- "${out_args[@]}"
 
     eval "envname=\$$#"
     virtualenvwrapper_verify_workon_home || return 1
-    virtualenvwrapper_verify_virtualenv || return 1
+    # virtualenvwrapper_verify_virtualenv || return 1
     (
         [ -n "$ZSH_VERSION" ] && setopt SH_WORD_SPLIT
         virtualenvwrapper_cd "$WORKON_HOME" &&
-        "$VIRTUALENVWRAPPER_VIRTUALENV" $VIRTUALENVWRAPPER_VIRTUALENV_ARGS "$@" &&
+        "$interpreter" -m venv $envname &&
         [ -d "$WORKON_HOME/$envname" ] && \
             virtualenvwrapper_run_hook "pre_mkvirtualenv" "$envname"
     )
